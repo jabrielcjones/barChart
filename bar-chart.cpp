@@ -1,0 +1,306 @@
+// file name -- bar-chart.cpp
+
+// This file contains the definitions of the member functions of
+// the BarChart class
+
+const int WINDOW_WIDTH = 640;
+const int WINDOW_HEIGHT = 480;
+const int MAX = 100;
+const double ORIGIN_X = WINDOW_WIDTH * 0.15;
+const double ORIGIN_Y = WINDOW_HEIGHT * 0.10;
+
+// ============================== function prototypes ==========================
+const char c_str();
+
+// ============================== header files ===================================
+#include <iostream>                 // for console I/O
+#include <sketch.h>                 // for sketch library
+#include "bar-chart.h"
+using namespace std;
+
+BarChart::BarChart()
+/**
+   intialize member variables using default values
+
+   precondition: none
+
+   postcondition: member variables intialized with default values
+*/
+{
+   for(int i = 0; i < 10; i++)
+      {
+         values[i] = 0;
+         labels[i] = "no data";
+      }
+
+   size = 0;
+   title = "My Bar Chart";
+} // default constructor
+
+
+double BarChart::getValue(int offset)
+/**
+   returns value of the element in the values array based on the
+   offset of the element.
+
+   precondition: offset is inbound (between 0 and one less than size)
+
+   postcondition: returns the value stored in value to an element in
+                  the values array based on the offset.
+*/
+{
+   if(offset > -1)
+      return values[offset];
+
+   else
+      return 0;
+}
+
+
+string BarChart::getLabel(int offset)
+/**
+   returns one of the elements in the labels array based on
+   the offset of the element.
+
+   precondition: offset is inbound (between 0 and one less
+                 than size)
+
+   postcondition: returns the label of an element in the
+                  labels array based on the offset.
+*/
+{
+   if(offset > -1)
+      return labels[offset];
+   else
+      return "ERROR: offset outside of bounds";
+
+}
+
+string BarChart::getTitle()
+/**
+   returns the title of the bar chart
+
+   precondition: none
+
+   postcondition: title of bar chart returned
+*/
+{
+   return title;
+}
+
+int BarChart::getSize()
+/**
+   fetches the size of the arrays
+
+   precondition: none
+
+   postcondition: none
+*/
+{
+   return size;
+}
+
+void BarChart::setValue(double value,
+                        string label,
+                        int offset)
+/**
+   assigns positive value to one of elements in the values array
+   based on the offset of the element, assigns a string to one of the
+   elements in the labels array based on the offset of the element,
+   updates size.
+
+   precondition: value is positive. offset is inbound (between 0 and
+                 one less than size)
+
+   postcondition: the value stored in value is assigned to an
+                  element in the values array on the offset.
+
+                  the label stoted in label is assigned to an
+                  element in the labels array based on the offset.
+
+                  updates size.
+*/
+{
+   if(value > 0)
+   {
+      values[offset] = value;
+      labels[offset] = label;
+      size++;
+   }
+   else
+      cout << "Value not positive"
+           << endl;
+}
+
+void BarChart::setTitle(string new_title)
+/**
+   sets new bar chart title
+
+   precondition: none
+
+   postcondition: changes title of chart to new_title
+*/
+{
+   title = new_title;
+
+   cout << new_title
+        << endl;
+}
+
+
+void BarChart::setSize(int new_size)
+/**
+   sets new size of arrays
+
+   precondition: none
+
+   postcondition: changes size of the arrays
+*/
+{
+   size = new_size;
+}
+
+void BarChart::drawXAxis()
+/**
+   draws x-axis
+   draws hash marks with equal space among them
+   displays labels properly under each bar
+
+   precondition: initialization of label array
+
+   postconditions: x-axis drawn
+                   hash marks drawn
+                   labels displayed
+*/
+{
+   char labels_char[MAX];
+
+   moveTo(ORIGIN_X,ORIGIN_Y);                                          
+   lineTo(WINDOW_WIDTH - ORIGIN_X, ORIGIN_Y);// x-axis drawn
+   lineTo(ORIGIN_X - 10, ORIGIN_Y);
+
+   double x_axis_length = WINDOW_WIDTH - (2 * ORIGIN_X);
+   double space = x_axis_length / (size + 1);
+   double label_space = space - 32;
+
+   moveTo(ORIGIN_X + space, ORIGIN_Y);
+   lineTo(ORIGIN_X + space, ORIGIN_Y - 10);      // first hash mark drawn
+
+   drawText(ORIGIN_X + label_space, ORIGIN_Y - 20, labels[0]); // first bar is labeled
+   int multiple = 2;
+
+   for(int i = 1; i < size; i++)
+   {
+      double new_space;
+      new_space = space * multiple;
+      double new_label_space = new_space - 32;
+
+      moveTo(ORIGIN_X + new_space, ORIGIN_Y);
+      lineTo(ORIGIN_X + new_space, ORIGIN_Y - 10); // rest of hash marks drawn
+
+      if(i%2 == 0)
+      {
+         drawText(ORIGIN_X + new_label_space, ORIGIN_Y - 20, labels[i]);  // rest of bars labeled
+      }
+      else
+      {
+         drawText(ORIGIN_X + new_label_space, ORIGIN_Y - 30, labels[i]);  // rest of bars labeled
+      }
+
+
+
+      multiple++;
+   } 
+}
+
+void BarChart::drawYAxis()
+/**
+   draws y-axis
+   draws hash marks with equal space among them (5 major marks)
+   displays values in accordance with hash marks
+
+   precondition: initialization of label array
+
+   postconditions: y-axis drawn
+                   hash marks drawn
+                   values displayed
+*/
+{
+   moveTo(ORIGIN_X,ORIGIN_Y);
+   lineTo(ORIGIN_X, WINDOW_HEIGHT - ORIGIN_Y);   // y-axis drawn
+   lineTo(ORIGIN_X, ORIGIN_Y - 10);
+
+   double y_axis_length = WINDOW_HEIGHT - (2 * ORIGIN_Y);
+   double space = y_axis_length / 5;
+
+   moveTo(ORIGIN_X, ORIGIN_Y + space);
+   lineTo(ORIGIN_X - 10, ORIGIN_Y + space);   // first hash drawn
+
+   int multiple = 2;
+
+   for(int i = 1; i < 5; i++)
+   {
+      double new_space;
+      new_space = space * multiple;
+
+      moveTo(ORIGIN_X, ORIGIN_Y + new_space);
+      lineTo(ORIGIN_X - 10, ORIGIN_Y + new_space);
+      multiple++;
+   } // rest of hash marks drawn
+}
+
+
+void BarChart::draw()
+/**
+   draws bar chart based on values stored in member variables
+
+   precondition: series of values has been stored in the
+                 values array.
+                 series of strings has been stored in the
+                 labels array.
+                 title of bar chart has been initialized.
+
+   postcondition: bar chart in draw.
+*/
+{
+   createWindow(WINDOW_WIDTH, WINDOW_HEIGHT, title);
+
+   drawXAxis();
+   drawYAxis();
+
+   double space = (WINDOW_WIDTH - (2 * ORIGIN_X)) / (size + 1);
+
+   if(values[0] < ((WINDOW_HEIGHT - (2 * ORIGIN_Y)) * 0.9))
+      fillRectangle(ORIGIN_X + space - ((WINDOW_WIDTH - (2 * ORIGIN_X)) / (3 * size) / 2), ORIGIN_Y, (WINDOW_WIDTH - (2 * ORIGIN_X)) / (3 * size), values[0]); // first bar drawn
+   else
+   {
+      cout << "Value "
+           << values[0]
+           << " in location 0 is out of bounds and therefore could not be drawn."
+           << endl;
+   } // ensures that the value is in bounds
+   int multiple = 2;
+
+   for(int i = 1; i < size; i++)
+   {
+      double new_space;
+      new_space = space * multiple;
+
+      if(values[i] < ((WINDOW_HEIGHT - (2 * ORIGIN_Y)) * 0.9))
+         fillRectangle(ORIGIN_X + new_space - ((WINDOW_WIDTH - (2 * ORIGIN_X)) / (3 * size) / 2), ORIGIN_Y, (WINDOW_WIDTH - (2 * ORIGIN_X)) / (3 * size), values[i]);
+      else
+      {
+         cout << "Value "
+              << values[i]
+              << " in location "
+              << i
+              << " is out of bounds and therefore could not be drawn."
+              << endl;
+      }  // ensures that the rest of the values are in bounds
+   multiple++;
+   }  // rest of bars drawn
+
+   endOfShape();
+   startDrawing();
+}
+

@@ -1,0 +1,87 @@
+// file name -- assign2.cpp
+// Jabriel C. Jones
+// The purpose of this program is to draw a bar chart using the class BarChart
+// and data read in from a file.
+
+
+// ============================== header files ===================================
+#include <iostream>                 // for console I/O
+#include <sketch.h>                 // for sketch library
+#include "bar-chart.h"              // for class functions
+#include <fstream>                  // for files
+#include <string>                   // for string functions
+using namespace std;
+
+
+// ============================== named constants =============================
+   const int WINDOW_WIDTH = 640;
+   const int WINDOW_HEIGHT = 480;
+   const int NAME_SIZE = 100;
+
+// ============================== function prototypes ==============================
+   void openFile(ifstream&);
+   void drawBarChart(BarChart, ifstream);
+
+int main()
+{
+   BarChart first;
+
+   ifstream infile;
+   openFile(infile);
+   drawBarChart(first, infile);
+
+return 0;
+} //function main
+
+void drawBarChart(BarChart chart, ifstream infile)
+/**
+   purpose: Draws Bar Chart.
+
+   preconditions: file must be opened
+
+   postconditions:   Bar Chart is drawn
+**/
+{
+   string title;
+   double value;
+   string label;
+
+   getline(infile, title);
+   chart.setTitle(title);  // sets the title of the bar chart
+
+   for(int i = 0; i < 10; i++)
+   {
+      infile >> value
+             >> label;
+
+      chart.setValue(value,label,i);
+   }  // sets the values of the values and labels arrays
+
+   chart.draw();  //bar chart is drawn
+}
+
+void openFile(ifstream& infile)
+/**
+   purpose: Opens the file.
+
+   preconditions: none
+
+   postconditions:   file is opened
+**/
+{
+   char file_name[NAME_SIZE];
+
+   do
+   {
+      cout << "Enter input data file name: ";
+      cin >> file_name;
+      infile.open(file_name);
+      if (!infile)
+      {
+         cout << file_name
+              << " was not opened successfully."
+              << endl;
+      }
+   }while(!infile);  // open file
+}
+
