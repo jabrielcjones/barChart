@@ -1,4 +1,4 @@
-// file name -- assign2.cpp
+// file name -- barChart.cpp
 // Jabriel C. Jones
 // The purpose of this program is to draw a bar chart using the class BarChart
 // and data read in from a file.
